@@ -2,7 +2,15 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
   try {
-    const token = req.header("Authorization").split(" ")[1];
+    console.log("verifyToken: Before token verification");
+    const authorizationHeader = req.header("Authorization");
+    console.log("verifyToken: Authorization Header:", authorizationHeader);
+
+    if (!authorizationHeader) {
+      return res.status(401).json({ error: "Authorization header missing" });
+    }
+
+    const token = authorizationHeader.split(" ")[1];
     console.log("Received Token:", token);
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
@@ -10,8 +18,12 @@ const verifyToken = async (req, res, next) => {
     });
 
     console.log("Decoded Token:", decoded);
+    console.log("verifyToken: Token verified successfully");
 
-    req.user = decoded;
+    req.user = {
+      userId: decoded._id,
+      email: decoded.email,
+    };
 
     next();
   } catch (error) {
