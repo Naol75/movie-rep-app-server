@@ -8,14 +8,8 @@ const verifyToken = require("../middleware/verifyToken.js");
 const authenticationController = {
   register: async (req, res) => {
     const { name, username, email, password, repeatPassword } = req.body;
-
+    console.log("Request body:", req.body);
     try {
-      console.log("Request file:", req.file);
-      if (!req.file) {
-        return res.status(400).json({ errorMessage: "No file provided" });
-      }
-
-      console.log("Request file path:", req.file.path);
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res
@@ -47,28 +41,12 @@ const authenticationController = {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const result = await uploadImage(req.file.buffer);
-      console.log("Result from uploadImage:", result);
-      let imgUrl = null;
-      if (result && result.secure_url) {
-        imgUrl = result.secure_url;
-      } else {
-        console.log("Secure URL is not defined in the result.");
-      }
-      console.log("imgUrl after assignment:", imgUrl);
       const newUser = new User({
         name,
         username,
         email,
         password: hashedPassword,
       });
-
-      const imageUrl = await uploadImage(req.file.buffer);
-      if (imageUrl) {
-        newUser.image = imageUrl;
-      } else {
-        newUser.image = "URL de imagen predeterminada";
-      }
 
       await newUser.save();
 

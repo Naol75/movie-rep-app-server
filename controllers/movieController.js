@@ -1,67 +1,60 @@
 const Movie = require("../models/Movie");
+const User = require("../models/User");
 
 const movieController = {
-  // Get all movies
-  getAllMovies: async (req, res) => {
+  addMovieToFavourites: async (req, res) => {
     try {
-      const movies = await Movie.find.populate("director actors");
-      res.json(movies);
+      const { userId, movieTitle } = req.body;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+
+      const lowerCaseMovieTitle = movieTitle.toLowerCase();
+      if (
+        !user.favouriteItems ||
+        !user.favouriteItems.some(
+          (item) => item && item.toLowerCase() === lowerCaseMovieTitle
+        )
+      ) {
+        if (!user.favouriteItems) {
+          user.favouriteItems = [];
+        }
+
+        user.favouriteItems.push(lowerCaseMovieTitle);
+
+        await user.save();
+
+        res
+          .status(200)
+          .json({ message: "Película agregada a favoritos con éxito" });
+      } else {
+        res.status(200).json({ message: "La película ya está en favoritos" });
+      }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error("Error al agregar película a favoritos", error);
+      res.status(500).json({ error: "Error interno del servidor" });
     }
   },
 
-  // Get a movie by its ID
-  getMovieById: async (req, res) => {
-    const movieId = req.params.movieId;
+  deleteMovieFromFavourites: async (req, res) => {
     try {
-      const movie = await Movie.findbById(movieId).populate("director actors");
-      if (!movie) {
-        return res.status(404).json({ message: "Movie not found" });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
+      const { userId, movieId } = req.body;
 
-  // Add a new movie
-  addMovie: async (req, res) => {
-    const { title, genre, director, actors } = req.body;
-    try {
-      const newMovie = new Movie({ title, genre, director, actors });
-      await newMovie.save();
-      res.status(201).json(newMovie);
+      const user = await User.findById(userId);
+
+      user.favouriteItems = user.favouriteItems.filter(
+        (item) => item !== movieId
+      );
+      await user.save();
+
+      res
+        .status(200)
+        .json({ message: "Película quitada de favoritos con éxito" });
     } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-  updateMovie: async (req, res) => {
-    const movieId = req.params.movieId;
-    const { title, genre, director, actors } = req.body;
-    try {
-      const updatedMovie = await Movie.findByIdAndUpdate(
-        movieId,
-        { title, genre, director, actors },
-        { new: true }
-      ).populate("director actors");
-      if (!updatedMovie) {
-        return res.status(404).json({ message: "Movie not found" });
-      }
-      res.json(updatedMovie);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-  deleteMovie: async (req, res) => {
-    const movieId = req.params.movieId;
-    try {
-      const deletedMovie = Movie.findByIdAndDelete(movieId);
-      if (!deletedMovie) {
-        res.status(404).json({ message: "Movie not found" });
-      }
-      res.json({ message: "Movie deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ error: err.message });
+      console.error("Error al quitar película de favoritos", error);
+      res.status(500).json({ error: "Error interno del servidor" });
     }
   },
 };

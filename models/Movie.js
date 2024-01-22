@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
 
 const movieSchema = new mongoose.Schema({
-  title: String,
-  genre: String,
-  director: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Director",
+  genre_ids: [Number],
+  id: {
+    type: Number,
+    required: true,
+    unique: true,
   },
-  actors: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Actor",
-    },
-  ],
+  original_language: String,
+  name: String,
+  overview: String,
+  popularity: Number,
+  poster_path: String,
+  release_date: Date,
+  title: String,
+  vote_average: Number,
+  vote_count: Number,
 });
 
 const Movie = mongoose.model("Movie", movieSchema);

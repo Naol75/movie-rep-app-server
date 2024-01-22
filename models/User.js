@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
   image: {
     type: String,
   },
+  favouriteItems: [{ type: String, unique: true }],
 });
 
 const User = mongoose.model("User", userSchema);
