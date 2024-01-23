@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const indexRoutes = require("./routes/index.routes");
 const errorHandler = require("./middleware/errorHandler");
+const bodyParser = require("body-parser");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -28,6 +29,8 @@ app.use(express.json());
 
 app.use(morgan("dev"));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // Cookie parser
 app.use(cookieParser());
 
