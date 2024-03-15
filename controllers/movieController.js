@@ -4,24 +4,25 @@ const User = require("../models/User");
 const movieController = {
   addMovieToFavourites: async (req, res) => {
     try {
-      const { userId, movieTitle } = req.body;
+      console.log(
+        "Recibida solicitud para agregar película a favoritos:",
+        req.body
+      );
+      const { userId, movieId } = req.body;
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
 
-      const lowerCaseMovieTitle = movieTitle.toLowerCase();
       if (
         !user.favouriteItems ||
-        !user.favouriteItems.some(
-          (item) => item && item.toLowerCase() === lowerCaseMovieTitle
-        )
+        !user.favouriteItems.some((item) => item && item === movieId)
       ) {
         if (!user.favouriteItems) {
           user.favouriteItems = [];
         }
 
-        user.favouriteItems.push(lowerCaseMovieTitle);
+        user.favouriteItems.push(movieId);
 
         await user.save();
 
@@ -38,12 +39,12 @@ const movieController = {
   deleteMovieFromFavorites: async (req, res) => {
     try {
       console.log("Received request to delete movie from favorites:", req.body);
-      const { userId, movieTitle } = req.body;
+      const { userId, movieId } = req.body;
       console.log(
         "Deleting from favorites. User ID:",
         userId,
         "Movie Title:",
-        movieTitle
+        movieId
       );
 
       const user = await User.findById(userId);
@@ -52,11 +53,9 @@ const movieController = {
         console.log("User not found");
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
-
-      const lowerCaseMovieTitle = movieTitle.toLowerCase();
       if (user.favouriteItems && user.favouriteItems.length > 0) {
         const updatedFavorites = user.favouriteItems.filter(
-          (item) => item && item.toLowerCase() !== lowerCaseMovieTitle
+          (item) => item && item != movieId
         );
 
         if (
