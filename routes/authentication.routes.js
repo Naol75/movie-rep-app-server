@@ -3,6 +3,7 @@ const authenticationController = require("../controllers/authenticationControlle
 const verifyToken = require("../middleware/verifyToken");
 const router = express.Router();
 
+router.get("/getIp", authenticationController.getIp);
 router.get("/verify", verifyToken, (req, res) => {
   res.json(req.user);
 });

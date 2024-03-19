@@ -22,6 +22,12 @@ db.once("open", () => {
   console.log("Connected to DataBase");
 });
 
+app.use((req, res, next) => {
+  const ip = req.ip;
+  res.locals = ip;
+  next();
+});
+
 app.use(cors());
 
 // Middleware for parsing JSON in requests

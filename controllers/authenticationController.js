@@ -6,6 +6,10 @@ const { uploadImage, upload } = require("../middleware/cloudinary.middleware");
 const verifyToken = require("../middleware/verifyToken.js");
 
 const authenticationController = {
+  getIp: async (req, res) => {
+    const ip = res.locals;
+    res.json({ ip });
+  },
   register: async (req, res) => {
     const { name, username, email, password, repeatPassword } = req.body;
     console.log("Request body:", req.body);
