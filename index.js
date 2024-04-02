@@ -47,5 +47,5 @@ app.use(errorHandler);
 app.use("/api", indexRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server listening on PORT: ${PORT}`);
 });
