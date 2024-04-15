@@ -43,7 +43,7 @@ app.use(cookieParser());
 // Error handling middleware
 app.use(errorHandler);
 
-// Use el enrutador para la ruta "/api"
+// API Router
 app.use("/api", indexRoutes);
 
 app.listen(PORT, () => {

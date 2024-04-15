@@ -1,5 +1,3 @@
-const TVShow = require("../models/TVShow");
-
 const tvShowController = {
   getAllTVShow: async (req, res) => {
     try {

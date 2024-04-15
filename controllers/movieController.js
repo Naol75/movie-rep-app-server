@@ -1,13 +1,8 @@
-const Movie = require("../models/Movie");
 const User = require("../models/User");
 
 const movieController = {
   addMovieToFavourites: async (req, res) => {
     try {
-      console.log(
-        "Recibida solicitud para agregar película a favoritos:",
-        req.body
-      );
       const { userId, movieId } = req.body;
       const user = await User.findById(userId);
       if (!user) {

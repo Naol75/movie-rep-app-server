@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User.js");
 const { uploadImage, upload } = require("../middleware/cloudinary.middleware");
 
-const verifyToken = require("../middleware/verifyToken.js");
-
 const authenticationController = {
   getIp: async (req, res) => {
     const ip = res.locals;
